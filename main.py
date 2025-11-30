@@ -1,5 +1,9 @@
+from cli import cli
+
+
 def main():
-    print("Hello from project-csv-formatter!")
+    """Entry point - delegates to CLI"""
+    cli()
 
 
 if __name__ == "__main__":
