@@ -39,7 +39,7 @@ def profile_dataframe(
             print(f"Column '{key_column}' not found in DataFrame")
 
     validation_errors = None
-    if key_column == "ClientMatterCode" and key_column in df.columns:
+    if key_column is not None and key_column in df.columns:
         validation_errors = validate_dataframe_codes(df, key_column)
 
     return {
