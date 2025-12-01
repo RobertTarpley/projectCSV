@@ -15,6 +15,16 @@ dependencies = [
 [project.scripts]
 csv-tool = "cli:cli"
 
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["cli", "reader", "profiler", "transformer", "validators"]
+
+[tool.uv]
+package = true
+
 [dependency-groups]
 dev = [
     "pytest>=8.0.0",
