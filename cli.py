@@ -16,7 +16,14 @@ from transformer import (
 
 @click.group()
 def cli():
-    """CSV Tool - Profile and transform messy data files"""
+    """CSV Tool - Profile and transform messy data files.
+    
+    A command-line tool for analyzing and transforming CSV/Excel files.
+    Provides data profiling capabilities and comprehensive data transformation
+    with validation, duplicate handling, and formatting standardization.
+    
+    Use 'profile' to analyze data quality and 'transform' to clean and format data.
+    """
     pass
 
 
@@ -24,8 +31,26 @@ def cli():
 @click.argument("file_path", type=click.Path(exists=True))
 @click.option("--key", default=None, help="Key column for duplicate detection")
 def profile(file_path: str, key: str | None):
-    """Profile a data file
-    Usage: python cli.py profile data.xlsx --key ClientMatterCode"""
+    """Analyze data file structure, quality, and business rule compliance.
+    
+    Generates a comprehensive report showing row/column counts, data types,
+    missing values, unique counts, duplicate detection, and ClientMatterCode
+    validation when a key column is specified.
+    
+    Args:
+        file_path: Path to CSV or Excel file to analyze.
+        key: Optional column name for duplicate detection and validation.
+             If specified, will validate ClientMatterCode format (XXXXX.XXXXX).
+             
+    Examples:
+        \\b
+        Profile basic file structure:
+        $ python cli.py profile data.csv
+        
+        \\b
+        Profile with ClientMatterCode validation:
+        $ python cli.py profile data.xlsx --key ClientMatterCode
+    """
 
     try:
         df = read_file(file_path)
@@ -67,11 +92,30 @@ def profile(file_path: str, key: str | None):
 def transform(
     source_file: str, columns: tuple, case: str, duplicates: str, key: str, output: str
 ):
-    """
-    Transform a data file
-
-    Usage: python cli.py transform data.xlsx -c "ID:ClientMatterCode"
-           -c "Status" --case proper -o clean.csv
+    """Clean and transform data files with comprehensive validation.
+    
+    Applies a complete data transformation pipeline including column selection/renaming,
+    whitespace trimming, case conversion, ClientMatterCode validation, and duplicate
+    handling. Outputs clean, standardized UTF-8 CSV files ready for business use.
+    
+    Args:
+        source_file: Path to input CSV or Excel file.
+        columns: Column mappings in 'Source:Destination' or 'ColumnName' format.
+                Can be specified multiple times for multiple columns.
+        case: Text case transformation ('lower', 'upper', 'proper', 'none').
+        duplicates: How to handle duplicate key values ('keep-first', 'error').
+        key: Column name for duplicate detection and ClientMatterCode validation.
+        output: Path for output CSV file. Directories will be created if needed.
+        
+    Examples:
+        \\b
+        Basic transformation with column renaming:
+        $ python cli.py transform data.xlsx -c "ID:ClientMatterCode" -c "Name" -o clean.csv
+        
+        \\b
+        Full transformation with case conversion and duplicate removal:
+        $ python cli.py transform messy.csv -c "Client ID:ClientMatterCode" -c "Client Name:ClientName" 
+            --case proper --duplicates keep-first -o cleaned.csv
     """
 
     try:

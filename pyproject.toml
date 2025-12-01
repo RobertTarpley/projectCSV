@@ -1,12 +1,35 @@
 [project]
-name = "project-csv-formatter"
+name = "csv-tool"
 version = "0.1.0"
-description = "Add your description here"
+description = "Production-ready CLI tool for profiling and transforming messy CSV/Excel files"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "chardet>=5.0.0",
     "click>=8.3.1",
     "openpyxl>=3.1.5",
     "pandas>=2.3.3",
     "xlrd>=2.0.2",
+]
+
+[project.scripts]
+csv-tool = "cli:cli"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.14.7",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config", 
+    "--cov=.",
+    "--cov-report=term-missing",
+    "--cov-report=html:htmlcov",
 ]

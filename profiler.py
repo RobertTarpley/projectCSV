@@ -1,5 +1,6 @@
 # Data profiling logic
 import pandas as pd
+import click
 
 from validators import validate_dataframe_codes
 
@@ -7,6 +8,30 @@ from validators import validate_dataframe_codes
 def profile_dataframe(
     df: pd.DataFrame, key_column: str | None = None
 ) -> dict[str, any]:
+    """Analyze DataFrame structure, data quality, and business rule compliance.
+    
+    Provides comprehensive data profiling including row/column counts, missing
+    values, unique values, duplicate detection, and ClientMatterCode validation.
+    
+    Args:
+        df: The DataFrame to analyze.
+        key_column: Optional column name for duplicate detection and validation.
+                   If provided, will check for duplicates and validate ClientMatterCodes.
+                   
+    Returns:
+        A dictionary containing:
+        - 'total_rows': Number of data rows
+        - 'total_columns': Number of columns  
+        - 'columns_stats': List of per-column statistics
+        - 'duplicate_info': Duplicate analysis (None if no key_column or no duplicates)
+        - 'validation_errors': List of validation errors (None if no key_column)
+        
+    Examples:
+        >>> df = pd.DataFrame({'Name': ['Alice', 'Bob'], 'Age': [30, 25]})
+        >>> profile = profile_dataframe(df)
+        >>> profile['total_rows']
+        2
+    """
     total_rows = len(df)
     total_columns = len(df.columns)
 
@@ -36,7 +61,7 @@ def profile_dataframe(
                     "values": df[duplicated_mask][key_column].unique().tolist(),
                 }
         else:
-            print(f"Column '{key_column}' not found in DataFrame")
+            click.echo(f"Column '{key_column}' not found in DataFrame", err=True)
 
     validation_errors = None
     if key_column is not None and key_column in df.columns:
@@ -52,6 +77,24 @@ def profile_dataframe(
 
 
 def format_profile_output(profile: dict[str, any]) -> str:
+    """Format a profile dictionary into human-readable text output.
+    
+    Converts the structured profile data from profile_dataframe() into a
+    formatted string suitable for display to users.
+    
+    Args:
+        profile: Profile dictionary returned by profile_dataframe().
+        
+    Returns:
+        Formatted string with file statistics, column details, duplicates,
+        and validation errors in a readable format.
+        
+    Examples:
+        >>> profile = {'total_rows': 3, 'total_columns': 2, 'columns_stats': [...]}
+        >>> output = format_profile_output(profile)
+        >>> 'Rows: 3' in output
+        True
+    """
     output = "File Profile\n"
     output += "============\n"
     output += f"Rows: {profile['total_rows']}\n"
